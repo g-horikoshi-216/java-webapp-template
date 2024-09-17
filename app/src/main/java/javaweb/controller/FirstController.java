@@ -3,6 +3,8 @@ package javaweb.controller;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import common.constant.CommonConst;
 import javax.servlet.annotation.*;
 
 import javaweb.service.*;
@@ -17,8 +19,7 @@ public class FirstController extends HttpServlet {
 
             req.setAttribute("message", message);
             
-            // JSPにフォワード（パスを修正）
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/first.jsp");
+            RequestDispatcher dispatcher = req.getRequestDispatcher(CommonConst.JSP_BASE_DIR + "/first.jsp");
             dispatcher.forward(req, res);
     }
 }

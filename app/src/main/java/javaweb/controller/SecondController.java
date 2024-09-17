@@ -12,9 +12,12 @@ import javax.servlet.annotation.*;
 @WebServlet("/second")
 public class SecondController extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws IOException, ServletException {
+    throws IOException, ServletException {
             SecondService ss = new SecondService();
+            req.setCharacterEncoding("UTF-8");
+
             String name = req.getParameter("name");
+            System.out.println(name);
 
             req.setAttribute("name", ss.execute(name));
             RequestDispatcher rd = req.getRequestDispatcher(CommonConst.JSP_BASE_DIR + "/second.jsp");

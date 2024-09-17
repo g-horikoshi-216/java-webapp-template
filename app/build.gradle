@@ -65,7 +65,7 @@ task redeployTomcat {
     dependsOn 'shutdownTomcat', 'war', 'deployWar', 'startupTomcat'
 
     // タスクの実行順序を指定
-    tasks.shutdownTomcat.mustRunBefore tasks.war
-    tasks.war.mustRunBefore tasks.deployWar
-    tasks.deployWar.mustRunBefore tasks.startupTomcat
+    tasks.war.mustRunAfter tasks.shutdownTomcat
+    tasks.deployWar.mustRunAfter tasks.war
+    tasks.startupTomcat.mustRunAfter tasks.deployWar
 }

@@ -7,6 +7,7 @@
     </head>
     <body>
         <h1>Second Page</h1>
-        <p>あなたの名前は、<% request.getAttribute("name") %>です。</p>
+        <p>あなたの名前は、${name}です。</p>
+        <button onclick="window.location.href='/app/first'">戻る</button>
     </body>
 </html>
