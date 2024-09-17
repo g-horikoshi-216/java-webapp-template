@@ -1,0 +1,71 @@
+plugins {
+    // Apply the war plugin to support building a Java Web Application.
+    id 'war'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.tomcat:tomcat-servlet-api:9.0.37'
+
+    // テスト用の依存関係
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Tomcatの起動と停止タスク
+def tomcatHome = "/Users/g-horikoshi/Apache/apache-tomcat-9.0.93"
+
+task startupTomcat {
+    doLast {
+        println "Starting Tomcat..."
+        def proc = "${tomcatHome}/bin/startup.sh".execute()
+        proc.waitFor()
+        println proc.text
+    }
+}
+
+task shutdownTomcat {
+    doLast {
+        println "Stopping Tomcat..."
+        def proc = "${tomcatHome}/bin/shutdown.sh".execute()
+        proc.waitFor()
+        println proc.text
+    }
+}
+
+task deployWar {
+    dependsOn 'war'  // まずはwarタスクを実行
+    doLast {
+        println "Deploying WAR file to Tomcat..."
+        def warFile = file("${buildDir}/libs/${project.name}.war")
+        def destDir = file("${tomcatHome}/webapps/")
+        copy {
+            from warFile
+            into destDir
+        }
+        println "Deployment complete."
+    }
+}
+
+task redeployTomcat {
+    dependsOn 'shutdownTomcat', 'war', 'deployWar', 'startupTomcat'
+
+    // タスクの実行順序を指定
+    tasks.war.mustRunAfter tasks.shutdownTomcat
+    tasks.deployWar.mustRunAfter tasks.war
+    tasks.startupTomcat.mustRunAfter tasks.deployWar
+}
